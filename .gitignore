@@ -1,0 +1,16 @@
+# Windows 自动生成的垃圾文件
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# 如果用的是 Mac ,还应该忽略 .DS_Store
+.DS_Store
+
+# 忽略以波浪符（~）结尾的文件
+*~
+
+# 忽略 node_modules 模块
+node_modules
+
+# 忽略日志文件
+*.log
