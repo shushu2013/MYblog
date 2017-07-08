@@ -34,12 +34,19 @@ app.use(session({
 }));
 app.use(flash());
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extends: false}));
+app.use(bodyParser.urlencoded({extended: false}));
 // logger
-app.use(logger({stream: accessLog}));
+app.use(logger('combined',{stream: accessLog}));
 app.use(function(err, req, res, next) {
 	var meta = '[' + new Date() + ']' + req.url + '\n';
 	errorLog.write(meta + err.stack + '\n');
+	next();
+});
+
+// Test
+app.use(function(req, res, next) {
+	res.locals.showTests = app.get('env') != 'production' &&
+		req.query.test === '1';
 	next();
 });
 

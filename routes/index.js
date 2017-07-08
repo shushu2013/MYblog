@@ -3,6 +3,7 @@ var routes = require('./route');
 
 module.exports = function(app) {
 	app.get('/', routes.index);
+	app.get('/index', routes.index);
 	app.get('/u/:user', routes.user);
 
 	app.post('/post', checkLogin);

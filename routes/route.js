@@ -5,19 +5,54 @@ var crypto = require('crypto');
 var User = require('../models/user');
 var Post = require('../models/post');
 
+function Locals(req) {
+
+	this.user = req.session.user || null;
+	this.success = req.flash('success').toString() || null;
+	this.error = req.flash('error').toString() || null;
+	this.pageTestScript = null;
+}
+
+Locals.prototype.add = function add(key, vlaue) {
+	if (key) {
+		this[key] = value || null;
+	}
+}
+
+Locals.prototype.addObj = function add(obj) {
+	if (Object.prototype.toString.call(obj) === '[object Object]') {
+		for(var key in obj) { // 遍历所以可枚举属性
+			if (obj.hasOwnProperty(key)) { // 判断是否是自有属性
+				this[key] = obj[key];
+			}
+		}
+	}
+}
+
+
+
 exports.index = function(req, res) {
 	Post.get(null, function(err, posts) {
 		if (err) {
 			posts = [];
 		}
 
-		res.render('index', {
+		var locals = new Locals(req);
+		locals.addObj({
 			title: '首页',
 			posts: posts,
-			user: req.session.user,
-			success: req.flash('success').toString(),
-			error: req.flash('error').toString()
+			pageTestScript: '/test/tests-index.js'
 		});
+
+		res.render('index', locals);
+		// res.render('index', {
+		// 	title: '首页',
+		// 	posts: posts,
+		// 	user: req.session.user,
+		// 	pageTestScript: '/test/tests-index.js',
+		// 	success: req.flash('success').toString(),
+		// 	error: req.flash('error').toString()
+		// });
 	});
 };
 
@@ -36,13 +71,21 @@ exports.user = function(req, res) {
 				return res.redirect('/');
 			}
 
-			res.render('user', {
+			var locals = new Locals(req);
+			locals.addObj({
 				title: user.name,
 				posts: posts,
-				user: req.session.user,
-				success: req.flash('success').toString(),
-				error: req.flash('error').toString()
 			});
+
+			res.render('user', locals);
+
+			// res.render('user', {
+			// 	title: user.name,
+			// 	posts: posts,
+			// 	user: req.session.user,
+			// 	success: req.flash('success').toString(),
+			// 	error: req.flash('error').toString()
+			// });
 		});
 	});
 };
@@ -61,12 +104,21 @@ exports.post = function(req, res) {
 };
 
 exports.reg = function(req, res) {
-	res.render('reg', {
+
+	
+	var locals = new Locals(req);
+	locals.addObj({
 		title: '用户注册',
-		user: req.session.user,
-		success: req.flash('success').toString(),
-		error: req.flash('error').toString()
 	});
+
+	res.render('reg', locals);
+
+	// res.render('reg', {
+	// 	title: '用户注册',
+	// 	user: req.session.user,
+	// 	success: req.flash('success').toString(),
+	// 	error: req.flash('error').toString()
+	// });
 };
 
 exports.doReg = function(req, res) {
@@ -116,12 +168,20 @@ exports.doReg = function(req, res) {
 };
 
 exports.login = function(req, res) {
-	res.render('login', {
+
+	var locals = new Locals(req);
+	locals.addObj({
 		title: '用户登录',
-		user: req.session.user,
-		success: req.flash('success').toString(),
-		error: req.flash('error').toString()
 	});
+
+	res.render('login', locals);
+
+	// res.render('login', {
+	// 	title: '用户登录',
+	// 	user: req.session.user,
+	// 	success: req.flash('success').toString(),
+	// 	error: req.flash('error').toString()
+	// });
 };
 
 exports.doLogin = function(req, res) {

@@ -31,7 +31,7 @@
     1、在命令行下，直接用 node 启动
         $ node app.js
         
-    2、使用 microblog.sh 脚本
+    2、使用 microblog.sh 脚本（仅在Linux环境下可用）
         启动程序运行 $ ./microblog.sh start
         结束程序运行 $ ./microblog.sh stop
 
@@ -44,7 +44,7 @@
 >功能：
 >   >用户登录、注册，发表微博、浏览所有微博、浏览自己的主页
 >   >
->   >使用本地 Mongodb 数据库存储数
+>   >使用本地 Mongodb 数据库存储数据
 >   
 
 ## LICENSE

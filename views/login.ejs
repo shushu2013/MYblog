@@ -21,6 +21,12 @@
 				<button type="submit" class="btn btn-primary">登录</button>
 			</div>
 		</div>
+		<input type="hidden" name="referrer">
 	</fieldset>
 </form>
+<script type="text/javascript">
+	$(document).ready(function() {
+		$('input[name="referrer"]').val(document.referrer);
+	});
+</script>
 <%- include footer%>
