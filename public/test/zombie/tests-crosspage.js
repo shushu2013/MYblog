@@ -1,5 +1,4 @@
 var Browser = require('zombie');
-var assert = require('chai').assert;
 
 var browser;
 
@@ -19,7 +18,7 @@ suite('Cross-Page Tests', function() {
 	});
 
 	test('requesting login from the reg page', function(done) {
-		var referrer = 'http://localhost:3000/reg'
+		var referrer = 'http://localhost:3000/reg';
 		browser.visit(referrer, function() {
 			browser.clickLink('nav a[href="/login"]', function() {
 				browser.assert.element('form input[name=referrer]', referrer);
@@ -35,4 +34,4 @@ suite('Cross-Page Tests', function() {
 				done();
 			});
 	});
-})
+});

@@ -4,31 +4,7 @@
 var crypto = require('crypto');
 var User = require('../models/user');
 var Post = require('../models/post');
-
-function Locals(req) {
-
-	this.user = req.session.user || null;
-	this.success = req.flash('success').toString() || null;
-	this.error = req.flash('error').toString() || null;
-	this.pageTestScript = null;
-}
-
-Locals.prototype.add = function add(key, vlaue) {
-	if (key) {
-		this[key] = value || null;
-	}
-}
-
-Locals.prototype.addObj = function add(obj) {
-	if (Object.prototype.toString.call(obj) === '[object Object]') {
-		for(var key in obj) { // 遍历所以可枚举属性
-			if (obj.hasOwnProperty(key)) { // 判断是否是自有属性
-				this[key] = obj[key];
-			}
-		}
-	}
-}
-
+var Locals = require('./locals');
 
 
 exports.index = function(req, res) {
@@ -41,7 +17,7 @@ exports.index = function(req, res) {
 		locals.addObj({
 			title: '首页',
 			posts: posts,
-			pageTestScript: '/test/tests-index.js'
+			pageTestScript: '/test/pgtest/tests-index.js'
 		});
 
 		res.render('index', locals);
@@ -49,7 +25,7 @@ exports.index = function(req, res) {
 		// 	title: '首页',
 		// 	posts: posts,
 		// 	user: req.session.user,
-		// 	pageTestScript: '/test/tests-index.js',
+		// 	pageTestScript: '/test/pgtest/tests-index.js',
 		// 	success: req.flash('success').toString(),
 		// 	error: req.flash('error').toString()
 		// });
@@ -146,7 +122,7 @@ exports.doReg = function(req, res) {
 	// 检查用户名是否已经存在
 	User.get(newUser.name, function(err, user) {
 		if (user) {
-			err = 'Username already exists.'
+			err = 'Username already exists.';
 		}
 
 		if (err) {

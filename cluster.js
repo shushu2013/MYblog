@@ -17,7 +17,7 @@ if (cluster.isMaster) {
 
 	cluster.on('listening', function(worker, address) {
 		// 监听子进程的 listen 事件
-		console.log(`A worker is now connected to ${address.address}:${address.port}`);
+		console.log('A worker is now listened to' + address.address + ':' + address.port);
 	});
 
 	// 初始开启与 CPU 数量相同的工作进程

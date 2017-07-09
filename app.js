@@ -37,11 +37,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 // logger
 app.use(logger('combined',{stream: accessLog}));
-app.use(function(err, req, res, next) {
-	var meta = '[' + new Date() + ']' + req.url + '\n';
-	errorLog.write(meta + err.stack + '\n');
-	next();
-});
+
 
 // Test
 app.use(function(req, res, next) {
@@ -53,9 +49,18 @@ app.use(function(req, res, next) {
 // Routes
 routes(app);
 
-// 404 
-app.use(function(req, res, next) {
-  res.status(404).send('Sorry cant find that!');
+// 定制 404 页面 
+app.use(function(req, res) {
+ 	res.status(404).send('Sorry cant find that!');
+});
+
+// 定制 505 页面
+app.use(function(err, req, res, next) {
+	var meta = '[' + new Date() + ']' + req.url + '\n';
+	errorLog.write(meta + err.stack + '\n');
+
+	res.status(500).send('500 - Server Error');
+	next();
 });
 
 // 在外部模块调用app.js时，禁用服务器自动启动

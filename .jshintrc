@@ -1,0 +1,13 @@
+{
+  "esnext": false,
+  "moz": true,
+  "boss": true,
+  "node": true,
+  "strict": false,
+  "validthis": true,
+  "mocha": true,
+  "globals": {
+    "EventEmitter": true,
+    "Promise": true
+  }
+}

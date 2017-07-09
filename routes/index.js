@@ -21,7 +21,7 @@ module.exports = function(app) {
 
 	app.get('/logout', checkLogin);
 	app.get('/logout', routes.logout);
-}
+};
 
 function checkLogin(req, res, next) {
 	if (!req.session.user) {
