@@ -14,6 +14,9 @@ var errorLog = fs.createWriteStream('error.log', {flags: 'a'});
 
 var app = module.exports = express();
 
+// disables the "X-Powered-By: Express" HTTP header.
+app.disable('x-powered-by');
+
 // view engine setup
 app.set('views', path.join(__dirname + '/views'));
 app.set('view engine', 'ejs');
@@ -56,7 +59,7 @@ app.use(function(req, res) {
 
 // 定制 505 页面
 app.use(function(err, req, res, next) {
-	var meta = '[' + new Date() + ']' + req.url + '\n';
+	var meta =  + new Date() + ']' + req.url + '\n';
 	errorLog.write(meta + err.stack + '\n');
 
 	res.status(500).send('500 - Server Error');
