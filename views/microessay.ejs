@@ -1,0 +1,10 @@
+<%- include ./partial/public_header%>
+	<% if (!user) { %>
+		<%- include ./partial/public_welcome%>
+	<% } else { %>
+		<%- include ./partial/public_post%>
+	<% } %>
+
+	<%- include ./partial/essay.ejs%>
+	
+<%- include ./partial/public_footer%>

@@ -3,6 +3,9 @@
 <head>
 	<meta charset="UTF-8">
 	<title><%= title%></title>
+	<meta name="keywords" content="微言，博客，微博，记录，分享" />
+	<meta name="description" content="记录生活点滴的微博、微言分享平台" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<link rel="stylesheet" type="text/css" href="/css/reset.css">
 	<link rel="stylesheet" type="text/css" href="/css/bootstrap.css">
 	<link rel="stylesheet" type="text/css" href="/css/common.css">
@@ -10,10 +13,14 @@
 		<link rel="stylesheet" type="text/css" href="/vendor/mocha.css">
 	<% } %>
 	<script src="/js/jquery.min.js"></script>
+	<% if (title === '设置') {%>
+		<link rel="stylesheet" type="text/css" href="/css/imgareaselect.css">
+		<script src="/js/imgareaselect.min.js"></script>
+	<%}%>
 </head>
 <body>
 	<nav class="navbar navbar-inverse navbar-fixed-top">
-		<div class="container-fluid">
+		<div class="container container-fluid">
 			<!-- Brand and toggle get grouped for better mobile display -->
 			<div class="navbar-header">
 				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
@@ -22,7 +29,7 @@
 					<span class="icon-bar"></span>
 					<span class="icon-bar"></span>
 				</button>
-				<a class="navbar-brand" href="/">Microblog</a>
+				<a class="navbar-brand" href="/">MYblog</a>
 			</div>
 
 			<!-- Collect the nav links, forms, and other content for toggling -->
@@ -32,22 +39,57 @@
 						<% if( title === '首页') { %> 
 							class="active"
 						<% } %>
-					><a href="/">首页 <span class="sr-only">(current)</span></a></li>
-					<% if (!user) { %>
-					<li
-						<% if( title === '用户登录') { %> 
+					><a href="/">首页</a>
+					</li>
+					<li 
+						<% if( title === '微言') { %> 
 							class="active"
 						<% } %>
-					><a href="/login">登录</a></li>
+					><a href="/micro-say">微言</a>
+					</li>
+					<li 
+						<% if( title === '微文') { %> 
+							class="active"
+						<% } %>
+					><a href="/micro-essay">微文</a>
+					</li>
+				</ul>
+				<ul class="nav navbar-nav navbar-right">	
+				<% if (user) { %>
+					<li
+						class="dropdown" role="presentation"
+					>
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+						<span><img src="<%if (user.imgurl) {%>
+							<%=user.imgurl %>
+						<%} else {%>
+							/avatar/default.jpg
+						<%}%>" class="img-circle img-avatar"></span>
+						</a>
+						<ul class="dropdown-menu">
+							<li>
+							<a href="/u/<%= user.name%>"><span class="glyphicon glyphicon-home"></span>个人主页</a></li>
+							<li>
+							<a href="/u/<%=user.name%>/setting"><span class="glyphicon glyphicon-cog"></span>设置</a>
+							</li>
+							<li>
+							<a href="/logout"><span class="glyphicon glyphicon-log-out"></span>登出</a>
+							</li>
+						</ul>
+					</li>
+				<% }  else { %>
 					<li
 						<% if( title === '用户注册') { %> 
 							class="active"
 						<% } %>
 					><a href="/reg">注册</a>
 					</li>
-					<% } else { %>
-						<li><a href="/logout">登出</a></li>
-					<% } %>
+					<li
+						<% if( title === '用户登录') { %> 
+							class="active"
+						<% } %>
+					><a href="/login">登录</a></li>
+				<% } %>
 				</ul>
 			</div><!-- /.navbar-collapse -->
 		</div><!-- /.container-fluid -->
@@ -57,12 +99,12 @@
 		<% if (success) { %>
 			<div class="alert alert-success alert-dismissible fade in" role="alert">
 				<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-				<%= success %>
+				<p><%= success %></p>
 			</div>
 		<% } %>
 		<% if (error) { %>
 			<div class="alert alert-danger alert-dismissible fade in" role="alert">
 				<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-				<%= error %>
+				<p><%= error %></p>
 			</div>
 		<% } %>

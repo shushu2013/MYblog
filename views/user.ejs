@@ -1,10 +1,5 @@
-<%- include header%>
-	<% if (user) { %>
-		
-		<%- include say%>
-
-	<% } %>
+<%- include ./partial/user-header%>
 	
-	<%- include posts%>
+	<%- include ./partial/user-posts%>
 	
-<%- include footer%>
+<%- include ./partial/user-footer%>

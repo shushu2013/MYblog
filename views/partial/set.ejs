@@ -1,0 +1,71 @@
+<!--遮罩层-->
+<div class="mask" style="display: none; z-index: 10">	
+</div>
+
+<div class="logo-cut" style="display: none; z-index: 10">
+	<div class="cut-close">×</div>
+	<div class="img-container">
+		<p>亲，请上传图片并裁剪</p>
+		<div class="img-show">
+			<!--原图-->
+			<img id="img-original" />
+		</div>
+	</div>
+	<div>
+		<p>选区预览</p>
+		<div class="img-preview">
+			<!--裁剪后的图片-->
+			<img id="img-cut" />
+		</div>
+	</div>
+	<div class="load-btn">
+		<span class="load-file">
+			<input id="uploadImage" type="file" accept=".jpg,.png" name="photoimage" />
+			选择图片
+		</span>
+		<button id="upImage">上传</button>
+	</div>
+</div>
+<form class="form-horizontal" method="post">
+	<fieldset>
+		<legend>设置</legend>
+		<div class="form-group">
+			<label for="avatar" class="col-sm-2 control-label">头像</label>
+			<div class="col-sm-10">
+				<div>
+					<img class="up-img" src="<%if (user) { %>
+						<% if (user.imgurl) { -%>
+							<%= user.imgurl%>			
+						<% } else { -%>
+							/avatar/default.jpg		
+						<% } -%>		
+					<% } %>"/> <br />
+					<button type="button" id="changeImage">修改头像</button>
+				</div>
+			</div>
+		</div>
+		<div class="form-group">
+			<label for="username" class="col-sm-2 control-label">用户名</label>
+			<div class="col-sm-10">
+				<input class="form-control" type="text" id="username" name="username" value="<%=user.name%>" readonly>
+			</div>
+		</div>
+		<div class="form-group">
+			<label for="motto" class="col-sm-2 control-label">格言</label>
+			<div class="col-sm-10">
+				<input type="text" id="motto" class="form-control" name="motto" value="<%=user.motto%>" autocomplete>
+			</div>
+		</div>
+		<div class="form-group">
+			<label for="desc" class="col-sm-2 control-label">描述</label>
+			<div class="col-sm-10">
+				<input type="text" id="desc" class="form-control" name="desc" value="<%=user.desc%>" autocomplete>
+			</div>
+		</div>
+		<div class="form-group">
+			<div class="col-sm-10 col-sm-offset-2">
+				<button type="submit" class="btn btn-primary" id="setting">保存</button>
+			</div>
+		</div>
+	</fieldset>
+</form>

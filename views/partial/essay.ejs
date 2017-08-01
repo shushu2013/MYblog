@@ -1,0 +1,28 @@
+<div class="essay">
+<% articles.forEach(function(article, index) { 
+if (index % 2 == 0) { %>
+	<div class="row">
+<% } %>
+<div class="col-md-6">
+	<h2><a href="/u/<%= article.user%>"><%= article.title%></a></h2>
+	<p><small class="text-muted">作者：<%= article.user%>&nbsp;时间：<%= article.time %></small></p>
+
+	<p>
+		<%- article.text.substring(0, 50) %>
+		<% if(article.text.length > 50) { %>
+			.....
+		<% } %>
+	</p>
+	<span class="glyphicon glyphicon-eye-open">16</span>
+	<span class="glyphicon glyphicon-thumbs-up">16</span>
+</div>
+
+<% if (index % 2 == 1) { %>
+</div>	
+<% } %>
+
+<% }) %>
+<% if (articles.length % 2 != 0) { %>
+</div>
+<% } %>
+</div>

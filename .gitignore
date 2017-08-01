@@ -13,4 +13,5 @@ Desktop.ini
 node_modules
 
 # 忽略日志文件
+log/*
 *.log

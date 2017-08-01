@@ -4,13 +4,13 @@ var routes = require('./routes/index');
 var bodyParser = require('body-parser');
 var session = require('express-session');
 var MongoStore = require('connect-mongo')(session);
-var settings = require('./settings');
 var flash = require('connect-flash');
 var logger = require('morgan');
 var fs = require('fs');
+var settings = require('./setting/settings');
 
-var accessLog = fs.createWriteStream('access.log', {flags: 'a'});
-var errorLog = fs.createWriteStream('error.log', {flags: 'a'});
+var accessLog = fs.createWriteStream('./log/access.log', {flags: 'a'});
+var errorLog = fs.createWriteStream('./log/error.log', {flags: 'a'});
 
 var app = module.exports = express();
 
@@ -52,7 +52,7 @@ app.use(function(req, res, next) {
 // Routes
 routes(app);
 
-// 定制 404 页面 
+// 定制 404 页面
 app.use(function(req, res) {
  	res.status(404).send('Sorry cant find that!');
 });
@@ -68,6 +68,6 @@ app.use(function(err, req, res, next) {
 
 // 在外部模块调用app.js时，禁用服务器自动启动
 if (!module.parent) {
-	app.listen(3000);
-	console.log("Express server listening on port 3000");
+	app.listen(settings.node_dev_port);
+	console.log("Express server listening on port " + settings.node_dev_port);
 }

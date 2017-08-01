@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>生命练习生的博客 </title>
+		<meta name="keywords" content="博客，记录，写作，练习" />
+		<meta name="description" content="记录点滴学习历程的博客札记" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="stylesheet" href="/css/reset.css" />
+		<link rel="stylesheet" href="/css/user.css" />
+		<link rel="stylesheet" href="/css/font-awesome.min.css" />
+		<script type="text/javascript" src="/js/jquery.min.js" ></script>
+	</head>
+	<body>
+	<header class="header">
+			<div class="table">
+			<div class="container">
+				<a href="#blog">
+					<img src="<% if (user.imgurl) { -%>
+						<%=user.imgurl %>
+					<% } else { -%>
+						/avatar/default.jpg
+					<% } -%>" alt="我的头像" class="user-avatar"/>
+				</a>
+				<h1>
+					<a href="#blog" title="前往“生命练习生”的主页" class="user-name">生命练习生</a>
+				</h1>
+				<p class="user-motto"><%=user.motto%></p>
+				<hr class="divider"/>
+				<p class="user-description">
+					<%=user.desc%>
+					<!-- Hi, 我正在努力成为一枚工程师，好奇新鲜事物，喜欢探索未知。<br />
+					练习唯慢不破，喜汇编，理系统，求创新，其中苦楚谁能诉，一朝练习一朝生。 -->
+				</p>
+				<div class="user-social">
+					<a href="https://github.com/shushu2013" target="_blank" class="user-link">
+						<i class="fa fa-github fa-2x" aria-hidden="true"></i>
+					</a>
+					<a href="#blog" class="user-link" >
+						<i class="fa fa-book fa-2x" aria-hidden="true"></i>
+					</a>
+					<a href="/u/<%=title%>/about" class="user-link" >
+						<i class="fa fa-user fa-2x" aria-hidden="true"></i>
+					</a>
+					<% if (user) { %>
+						<a href="/u/<%= user.name%>/setting" class="user-link" >
+							<i class="fa fa-cog fa-2x" aria-hidden="true"></i>
+						</a>
+					<% } %>
+				</div>
+			</div>
+			</div>
+		</header>

@@ -1,13 +1,49 @@
-/*
- * GET home page.
- */
 var crypto = require('crypto');
+var fs = require('fs');
 var User = require('../models/user');
 var Post = require('../models/post');
+var Article = require('../models/article');
 var Locals = require('./locals');
 
-
+// 处理 微言 首页
 exports.index = function(req, res) {
+	Post.get(null, function(err, posts) {
+		if (err) {
+			posts = [];
+		}
+
+		Article.get(null, function(err, articles) {
+			if (err) {
+				articles = [];
+			}
+
+			var locals = new Locals(req);
+
+			locals.addObj({
+				title: '首页',
+				posts: posts,
+				articles: articles,
+				pageTestScript: '/test/pgtest/tests-index.js'
+			});
+
+			if (locals.user) {
+				User.get(locals.user.name, function(err, user) {
+					if (err) {
+						return;
+					}
+					locals.user = user;
+					res.render('index', locals);
+				});
+			} else {
+				res.render('index', locals);
+			}
+
+		});
+	});
+};
+
+// 处理微言页面 /micro-say
+exports.microsay = function(req, res) {
 	Post.get(null, function(err, posts) {
 		if (err) {
 			posts = [];
@@ -15,23 +51,53 @@ exports.index = function(req, res) {
 
 		var locals = new Locals(req);
 		locals.addObj({
-			title: '首页',
+			title: '微言',
 			posts: posts,
-			pageTestScript: '/test/pgtest/tests-index.js'
 		});
 
-		res.render('index', locals);
-		// res.render('index', {
-		// 	title: '首页',
-		// 	posts: posts,
-		// 	user: req.session.user,
-		// 	pageTestScript: '/test/pgtest/tests-index.js',
-		// 	success: req.flash('success').toString(),
-		// 	error: req.flash('error').toString()
-		// });
+		if (locals.user) {
+			User.get(locals.user.name, function(err, user) {
+				if (err) {
+					return;
+				}
+				locals.user = user;
+				res.render('microsay', locals);
+			});
+		} else {
+			res.render('microsay', locals);
+		}
 	});
 };
 
+// 处理微文页面 /micro-essay
+exports.microessay = function(req, res) {
+	Article.get(null, function(err, articles) {
+		if (err) {
+			articles = [];
+		}
+
+		var locals = new Locals(req);
+		locals.addObj({
+			title: '微文',
+			articles: articles,
+		});
+
+		if (locals.user) {
+			User.get(locals.user.name, function(err, user) {
+				if (err) {
+					return;
+				}
+				locals.user = user;
+				res.render('microessay', locals);
+			});
+		} else {
+			res.render('microessay', locals);
+		}
+
+	});
+};
+
+// 处理个人主页 /u/:user
 exports.user = function(req, res) {
 	var username = req.params.user;
 
@@ -47,25 +113,122 @@ exports.user = function(req, res) {
 				return res.redirect('/');
 			}
 
-			var locals = new Locals(req);
-			locals.addObj({
-				title: user.name,
-				posts: posts,
+			Article.get(user.name, function(err, articles) {
+				if (err) {
+					req.flash('error', err);
+					return res.redirect('/');
+				}
+
+				var locals = new Locals(req);
+				locals.addObj({
+					title: user.name,
+					user: user,
+					posts: posts,
+					articles: articles,
+				});
+
+				res.render('user', locals);
+				
 			});
-
-			res.render('user', locals);
-
-			// res.render('user', {
-			// 	title: user.name,
-			// 	posts: posts,
-			// 	user: req.session.user,
-			// 	success: req.flash('success').toString(),
-			// 	error: req.flash('error').toString()
-			// });
 		});
 	});
 };
 
+// 处理个人介绍 /u/:user/about
+exports.about = function(req, res) {
+	var username = req.params.user;
+
+	User.get(username, function(err, user) {
+		if (!user) {
+			return res.redirect('/404');
+		}
+		res.render('about');
+	});
+};
+
+// 处理个人设置 /u/:user/setting
+exports.setting = function(req, res) {
+	var username = req.params.user;
+
+	User.get(username, function(err, user) {
+		if(!user) {
+			return res.redirect('/404');
+		}
+
+		var locals = new Locals(req);
+		locals.addObj({
+			title: '设置',
+			user: user
+		});
+
+		if (locals.user) {
+			User.get(locals.user.name, function(err, user) {
+				if (err) {
+					return;
+				}
+
+				locals.user = user;
+				res.render('setting', locals);
+			});
+		} else {
+			res.render('setting', locals);
+		}
+		
+	});
+};
+
+exports.dosetting = function(req, res) {
+	var username = req.params.user;
+	var img = req.body.img;
+	var motto = req.body.motto || null;
+	var desc = req.body.desc || null;
+	var newUser;
+
+	User.get(username, function(err, user){
+		if(!user) {
+			return res.redirect('/404');
+		}
+
+		if (img) {
+			var buffer = img.replace(/^data:image\/\w+;base64,/, '');
+			var imgBuffer;
+
+			buffer = buffer && buffer.replace(/\s/g,'+');
+			imgBuffer = new Buffer(buffer, 'base64');
+
+			fs.writeFile('./public/avatar/'+ username +'.png', imgBuffer, function(err) {
+				if(err) {
+					res.status(400).send({err:err});
+				} else {
+					user.imgurl = '/avatar/'+user.name+'.png';
+					user.motto = motto;
+					user.desc = desc;
+					newUser = new User(user);
+					newUser.update(function(err) {
+						if(err) {
+							res.status(400).send({err: err});
+						}
+						
+						res.status(200).send({imgurl: user.imgurl});
+					});
+				}
+			});	
+		} else {
+			user.motto = motto;
+			user.desc = desc;
+			newUser = new User(user);
+			newUser.update(function(err) {
+				if(err) {
+					res.status(200).send(err);
+				}
+				res.status(200).send('Success!');
+			});
+		}
+	});
+};
+
+
+// 处理发表微言 /post
 exports.post = function(req, res) {
 	var currentUser = req.session.user;
 	var post = new Post(currentUser.name, req.body.post);
@@ -79,6 +242,34 @@ exports.post = function(req, res) {
 	});
 };
 
+// 处理发表文章页面 /article
+exports.article = function(req, res) {
+	var locals = new Locals(req);
+	locals.addObj({
+		title: '发表文章',
+	});
+
+	res.render('article', locals);
+};
+
+exports.doarticle = function(req, res) {
+	var title = req.body.title,
+		text = req.body['editormd-markdown-doc'];
+
+	var currentUser = req.session.user;
+	var article = new Article(currentUser.name, title, text);
+	article.save(function(err) {
+		if (err) {
+			req.flash('error', err);
+			return res.redirect('/');
+		}
+		req.flash('success', '发表成功');
+		res.redirect('/u/' + currentUser.name);
+	});
+
+};
+
+// 处理注册页面 /reg
 exports.reg = function(req, res) {
 
 	
@@ -89,12 +280,6 @@ exports.reg = function(req, res) {
 
 	res.render('reg', locals);
 
-	// res.render('reg', {
-	// 	title: '用户注册',
-	// 	user: req.session.user,
-	// 	success: req.flash('success').toString(),
-	// 	error: req.flash('error').toString()
-	// });
 };
 
 exports.doReg = function(req, res) {
@@ -102,12 +287,23 @@ exports.doReg = function(req, res) {
 		password = req.body.password,
 		password_re = req.body['password-repeat'];
 
-	// 检验用户两次输入的口令是否一致
-	if (password_re != password) {
-		req.flash('error', '两次输入的口令不一致');
-		console.log("密码不一致！");
+	var flag = name && password && password === password_re;
+	var errorMsg = "";
+	if(!flag) {
+
+		// 检验用户两次输入的口令是否一致
+		if (name && password) {
+			errorMsg = password_re ? '两次输入的密码不一致！' : '请再次输入密码！' ;
+		} else {
+			errorMsg = '用户名或密码不能为空！';
+		}
+
+		req.flash('error', errorMsg);
+		console.log(errorMsg);
 		return res.redirect('/reg');
+
 	}
+	
 
 	// 生成口令的散列值
 	var md5 = crypto.createHash('md5');
@@ -122,7 +318,7 @@ exports.doReg = function(req, res) {
 	// 检查用户名是否已经存在
 	User.get(newUser.name, function(err, user) {
 		if (user) {
-			err = 'Username already exists.';
+			err = user.name + ' 用户名已存在！';
 		}
 
 		if (err) {
@@ -143,6 +339,7 @@ exports.doReg = function(req, res) {
 	});
 };
 
+// 处理登录页面 /login
 exports.login = function(req, res) {
 
 	var locals = new Locals(req);
@@ -151,13 +348,6 @@ exports.login = function(req, res) {
 	});
 
 	res.render('login', locals);
-
-	// res.render('login', {
-	// 	title: '用户登录',
-	// 	user: req.session.user,
-	// 	success: req.flash('success').toString(),
-	// 	error: req.flash('error').toString()
-	// });
 };
 
 exports.doLogin = function(req, res) {
@@ -167,11 +357,11 @@ exports.doLogin = function(req, res) {
 
 	User.get(req.body.username, function(err, user) {
 		if (!user) {
-			req.flash('error', '用户不存在');
+			req.flash('error', '用户不存在!');
 			return res.redirect('/login');
 		}
 		if (user.password != password) {
-			req.flash('error', '用户密码错误');
+			req.flash('error', '用户密码错误!');
 			return res.redirect('/login');
 		}
 
@@ -181,6 +371,8 @@ exports.doLogin = function(req, res) {
 	});
 };
 
+
+// 处理登出
 exports.logout = function(req, res) {
 	req.session.user = null;
 	req.flash('success', '登出成功');
