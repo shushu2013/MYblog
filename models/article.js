@@ -2,10 +2,14 @@ var mongodb = require('./db');
 var markdown = require('markdown').markdown;
 var getDate = require('./tlib').getDate;
 
-function Article(username, title, text, time) {
+function Article(username, title, text, html, time) {
 	this.user = username;
 	this.title = title;
 	this.text = text;
+	this.html = html;
+	this.up = 0;
+	this.view = 0;
+	this.whoups = [];
 
 	if (time) {
 		this.time = time;
@@ -21,6 +25,10 @@ Article.prototype.save = function save(callback) {
 		user: this.user,
 		title: this.title,
 		text: this.text,
+		html: this.html,
+		up: this.up,
+		view: this.view,
+		whoups: this.whoups,
 		time: this.time
 	};
 
@@ -72,7 +80,19 @@ Article.get = function get(username, callback) {
 				// 封装 articles 为 Article 对象数组
 				var articles = [];
 				docs.forEach(function(doc, index) {
-					var article = new Article(doc.user, doc.title, markdown.toHTML(doc.text), getDate(doc.time));
+					// 处理文章预览
+					var preview = doc.text.substr(0, 100).replace(/\[TOCM?\]|#|\r\n/g,'');
+					preview = doc.text.length > 100 ? preview + '...' : preview;
+
+					var article = {
+						user: doc.user,
+						title: doc.title,
+						text: markdown.toHTML(preview),
+						html: doc.html,
+						up: doc.up,
+						view: doc.view,
+						time: getDate(doc.time)
+					};
 					articles.push(article);
 				});
 				callback(null, articles);

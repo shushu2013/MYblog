@@ -219,9 +219,9 @@ exports.dosetting = function(req, res) {
 			newUser = new User(user);
 			newUser.update(function(err) {
 				if(err) {
-					res.status(200).send(err);
+					res.status(200).send({err: err});
 				}
-				res.status(200).send('Success!');
+				res.status(200).send({suc: 'Success!'});
 			});
 		}
 	});
@@ -231,14 +231,21 @@ exports.dosetting = function(req, res) {
 // 处理发表微言 /post
 exports.post = function(req, res) {
 	var currentUser = req.session.user;
-	var post = new Post(currentUser.name, req.body.post);
+	var text = req.body.post;
+
+	// 判断微言是否合格
+	if(!text) {
+		req.flash('error', '微言内容不能为空！');
+		return res.redirect('/');
+	}
+	var post = new Post(currentUser.name, text);
 	post.save(function(err) {
 		if (err) {
 			req.flash('error', err);
 			return res.redirect('/');
 		}
 		req.flash('success', '发表成功');
-		res.redirect('/u/' + currentUser.name);
+		res.redirect('/');
 	});
 };
 
@@ -254,17 +261,25 @@ exports.article = function(req, res) {
 
 exports.doarticle = function(req, res) {
 	var title = req.body.title,
-		text = req.body['editormd-markdown-doc'];
+		text = req.body['editormd-markdown-doc'],
+		html = req.body['editormd-html-code'];
+
+	// 判断文章是否合格
+	if(!title || !text) {
+		req.flash('error', '文章标题或内容不能为空！');
+
+		return res.redirect('/');
+	}
 
 	var currentUser = req.session.user;
-	var article = new Article(currentUser.name, title, text);
+	var article = new Article(currentUser.name, title, text, html);
 	article.save(function(err) {
 		if (err) {
 			req.flash('error', err);
 			return res.redirect('/');
 		}
 		req.flash('success', '发表成功');
-		res.redirect('/u/' + currentUser.name);
+		res.redirect('/');
 	});
 
 };

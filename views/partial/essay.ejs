@@ -8,10 +8,7 @@ if (index % 2 == 0) { %>
 	<p><small class="text-muted">作者：<%= article.user%>&nbsp;时间：<%= article.time %></small></p>
 
 	<p>
-		<%- article.text.substring(0, 50) %>
-		<% if(article.text.length > 50) { %>
-			.....
-		<% } %>
+		<%- article.text %>
 	</p>
 	<span class="glyphicon glyphicon-eye-open">16</span>
 	<span class="glyphicon glyphicon-thumbs-up">16</span>

@@ -1,3 +1,33 @@
+// 通用提示
+function showTip(msg, cls) {
+	cls = cls || 'alert-danger';
+	var find = 'div.' + cls + ' p';
+	var alert = $(find);
+	var alertMsg = msg || '出错了！';
+	var alertHtml = '<div class="alert '+ cls +' alert-dismissible fade in" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><p></p></div>';
+		
+	if (alert.length === 0) {
+		$('#container').prepend(alertHtml);
+		alert = $(find);
+	}
+
+	$(alert[0]).text(alertMsg);
+}
+
+// 发表微言检查
+$('form button#microsay').on('click', function(ev){
+	var text = $(ev.target).siblings("input").val();
+
+	if(!text) {
+		showTip('微言内容不能为空！', 'alert-danger');
+		return false;
+	}
+
+	return true;
+});
+
+
+// 微言点赞
 $('.says a.btn').click(function(ev){
 	var target = ev.target;
 	var flag = target.getAttribute('flag');
@@ -5,10 +35,16 @@ $('.says a.btn').click(function(ev){
 	var username = $(target).siblings("h2").find("a").text();
 	var num = target.text || 0;
 	Ajax('get', '/domicrosay', {username: username, id: postid, flag: flag}, 
-		function() {
+		function(msg) {
+
 			target.text = parseInt(num) + 1;
-		}, function(msg){
-			alert(msg);
+		}, function(err){
+			err = JSON.parse(err);
+			if(err.flag === 4) {
+				showTip(err.err, 'alert-danger');	
+			}else {
+				showTip('亲，出错了！', 'alert-danger');
+			}
 		});
 });
 
@@ -52,10 +88,10 @@ $('form #setting').on('click', function(ev) {
 	var data = $('form').serialize();
 	Ajax('Post', window.location, data ,function(){
 		// handler.clearUpImg();
-		alert('修改成功');
+		showTip('修改成功!', 'alert-success');
 
 	}, function(msg){
-		alert(msg);
+		showTip(msg, 'alert-danger');
 	});
 
 	return false;
@@ -89,7 +125,7 @@ $('form #setting').on('click', function(ev) {
  		// 监听是否选择了新图片
  		$container.on("change", "input[type=file]", function(ev) {
  			if (!this.value) return;
-			// 获取File对象，传给handleDrop进行处理
+			// 获取 File 对象，传给 handleDrop 进行处理
 			var file = this.files[0];
 			handler.handleDrop($(this).closest(".logo-cut"), file);
 		});
@@ -188,6 +224,7 @@ $('form #setting').on('click', function(ev) {
 handler.init($('.logo-cut'));
 
 
+// 通用程序
 function Ajax(type, url, data, success, failed) {
 	// 创建ajax对象
 	var xhr = null;
@@ -229,11 +266,10 @@ function Ajax(type, url, data, success, failed) {
 	xhr.onreadystatechange = function() {
 		if(xhr.readyState == 4) {
 			if(xhr.status == 200) {
-				console.log(xhr.responseText);
 				success(xhr.responseText);
 			} else {
 				if(failed) {
-					failed(xhr.status);
+					failed(xhr.responseText);
 				}
 			}
 		}

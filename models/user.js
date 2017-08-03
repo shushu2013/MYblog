@@ -6,6 +6,7 @@ function User(user) {
 	this.imgurl = user.imgurl || null;
 	this.motto = user.motto || null;
 	this.desc = user.desc || null;
+	this.time = user.time || new Date();
 }
 module.exports = User;
 
@@ -16,7 +17,8 @@ User.prototype.save = function save(callback) {
 		password: this.password,
 		imgurl: this.imgurl,
 		motto: this.motto,
-		desc: this.desc
+		desc: this.desc,
+		time: this.time
 	};
 
 	mongodb.open(function(err, db) {
@@ -49,7 +51,8 @@ User.prototype.update = function update(callback) {
 		password: this.password,
 		imgurl: this.imgurl,
 		motto: this.motto,
-		desc: this.desc
+		desc: this.desc,
+		time: this.time
 	};
 
 	mongodb.open(function(err, db) {
@@ -92,7 +95,7 @@ User.get = function get(username, callback) {
 				if (doc) {
 					// 封装文档为 User 对象
 					var user = new User(doc);
-					callback(err, user);
+					callback(null, user);
 				} else {
 					callback(err, null);
 				}
