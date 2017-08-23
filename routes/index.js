@@ -16,6 +16,11 @@ module.exports = function(app) {
 
 	// 个人主页
 	app.get('/u/:user', routes.user);
+	// 个人文章
+	app.get('/u/:user/essay/:id', routes.essay);
+
+	// 个人主页文章分页
+	app.get('/u/:user/page/:number', dojxs.dopage);
 	// 个人介绍
 	app.get('/u/:user/about', routes.about);
 	// 个人设置

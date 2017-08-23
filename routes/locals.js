@@ -1,6 +1,7 @@
 function Locals(req) {
 
-	this.user = req ?req.session.user :null;
+	this.user = req ? req.session.user :null;
+	this.usersession = req ? req.session.user : null;
 	this.success = req? req.flash('success').toString() :null;
 	this.error = req? req.flash('error').toString() : null;
 	this.pageTestScript = null;

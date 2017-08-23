@@ -10,6 +10,7 @@ function Article(username, title, text, html, time) {
 	this.up = 0;
 	this.view = 0;
 	this.whoups = [];
+	this.id = 0;
 
 	if (time) {
 		this.time = time;
@@ -29,7 +30,8 @@ Article.prototype.save = function save(callback) {
 		up: this.up,
 		view: this.view,
 		whoups: this.whoups,
-		time: this.time
+		time: this.time,
+		id: this.id
 	};
 
 	mongodb.open(function(err, db) {
@@ -42,6 +44,8 @@ Article.prototype.save = function save(callback) {
 				return callback(err);
 			}
 
+			// 文章 id 代表第几篇博文
+			article.id = collection.count();
 			// 为 user 属性添加索引
 			collection.ensureIndex('user');
 			// 写入 article 文档
@@ -85,17 +89,148 @@ Article.get = function get(username, callback) {
 					preview = doc.text.length > 100 ? preview + '...' : preview;
 
 					var article = {
+						id: doc._id,
 						user: doc.user,
 						title: doc.title,
 						text: markdown.toHTML(preview),
 						html: doc.html,
 						up: doc.up,
 						view: doc.view,
-						time: getDate(doc.time)
+						time: getDate(doc.time),
+						url: "/u/" + doc.user + "/essay/" + doc._id
 					};
 					articles.push(article);
 				});
 				callback(null, articles);
+			});
+		});
+	});
+};
+
+Article.getOnly = function getOnly(username, id, callback) {
+	mongodb.open(function(err, db) {
+		if (err) {
+			return callback(err);
+		}
+
+		// 读取　articles 集合
+		db.collection('articles', function(err, collection) {
+			if (err) {
+				mongodb.close();
+				return callback(err);
+			}
+
+			// 查找　user 属性为　username, _id 属性为　id 的文档
+			var query = {
+				_id: id,
+				user: username
+			};
+
+			// 更新浏览量
+			collection.findOneAndUpdate(query, {$inc: {view: 1}}, function(err, doc) {
+				mongodb.close();
+				if (doc) {
+					var article = {
+						id: doc.value._id,
+						user: doc.value.user,
+						title: doc.value.title,
+						html: doc.value.html,
+						up: doc.value.up,
+						view: doc.value.view,
+						time: getDate(doc.value.time),
+						essayid: doc.value.id
+					};
+					callback(null, article);
+				} else {
+					callback(err, null);
+				}
+			});
+		});
+	});
+};
+
+// 获取文章链接
+Article.getLink = function(id, callback) {
+	mongodb.open(function(err, db) {
+		if (err) {
+			return callback(err);
+		}
+
+		// 读取　articles 集合
+		db.collection('articles', function(err, collection) {
+			if (err) {
+				mongodb.close();
+				return callback(err);
+			}
+
+			// 查找　id 属性
+			var query = {
+				id: id
+			};
+			
+			collection.findOne(query, function(err, doc) {
+				mongodb.close();
+				if (doc) {
+					var url = {
+						id: doc._id,
+						user: doc.user,
+						title: doc.title
+					};
+					callback(null, url);
+				} else {
+					callback(err, null);
+				}
+			});
+
+		});
+
+	});
+};
+
+// 获取上下篇文章链接
+Article.getPreNextLink = function(id, callback) {
+	var url = {
+		pre: null,
+		next: null
+	};
+
+	Article.getLink(id - 1, function(err, preurl) {
+		if (preurl) {
+			url.pre = preurl;
+		}
+
+		Article.getLink(id + 1, function(err, nexturl) {
+			if (nexturl) {
+				url.next = nexturl;
+			}
+
+			callback(null, url);
+		});
+	});
+};
+
+// 更新阅读量
+Article.updateUp = function updateUp(username, id, callback) {
+	mongodb.open(function(err, db) {
+		if (err) {
+			return callback(err);
+		}
+
+		// 读取　articles　集合
+		db.collection('articles', function(err, collection) {
+			if (err) {
+				mongodb.close();
+				return callback(err);
+			}
+
+			var query = {
+				_id: id,
+				user: username
+			};
+
+			collection.update(query, {$inc: {up: 1}}, function(err, article) {
+				mongodb.close();
+				callback(err, article);
 			});
 		});
 	});

@@ -1,0 +1,51 @@
+<div class="content-wrapper">
+	<div class="post-main">
+		<% if (article.title) { -%>
+		<h2 class="post-title">
+			<a>
+				<%=article.title%>
+			</a>
+		</h2>
+		<div class="post-meta">
+			<time data-time="<%=article.time%>" class="post-meta-date">
+				<%=article.time%>
+			</time>
+			<span>•</span>
+			<span class="post-meta-tag">文章</span>
+			<span class="post-meta-tag"><i class="fa fa-eye">&nbsp;<%=article.view%></i></span>
+			<span class="post-meta-tag"><i class="fa fa-thumbs-o-up">&nbsp;<%=article.up%></i></span>
+		</div>
+		<div class="post-essay markdown-body editormd-preview-container">
+			<%- article.html %>
+		</div>
+		
+		<% } else { -%>
+		<div>系统出错了！未找到该文章！　~o~ </div>
+		<% } -%>
+	</div>
+
+	<div class="nav-essay">
+	<% if (url.pre) { -%>
+	<span class="pre-essay limit-text">
+		<a href="/u/<%=url.pre.user %>/essay/<%=url.pre.id%>">上一篇</a>
+		<%=url.pre.title%>
+	</span>
+	<% }　-%>
+
+	<% if (url.next) { -%>
+	<span class=" 
+		<% if (!url.pre) { -%>
+			right-essay
+		<% } else { -%>
+			next-essay
+		<% } -%> limit-text">
+		<a href="/u/<%=url.next.user%>/essay/<%=url.next.id%>">下一篇</a>
+		<%=url.next.title%>
+	</span>
+	<% } else { -%>
+	<span class="next-essay">没有更多文章了！</span>
+	<% } -%>
+</div>	
+</div>
+
+		

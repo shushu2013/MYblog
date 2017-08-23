@@ -3,6 +3,7 @@ var Article = require('../models/article');
 var User = require('../models/user');
 var ObjectID = require('mongodb').ObjectID;
 
+// 微言点赞
 exports.dosay = function(req, res) {
 	var username = req.query.username;
 	var id = ObjectID(req.query.id);
@@ -48,4 +49,40 @@ exports.dosay = function(req, res) {
 			});
 		});
 	});
+};
+
+// 微文分页
+exports.dopage = function(req, res) {
+	var username = req.params.user;
+	var pageNum = parseInt(req.params.number, 10);
+
+	if (typeof pageNum !== 'number' || pageNum < 1) {
+		return res.status(400).send({err: 'pageNum must be a positive number!'});
+	}
+
+	// 判断用户是否存在
+	User.get(username, function(err, user) {
+		if (!user) {
+			return res.status(400).send({err: '该用户不存在！'});
+		}
+
+		// 获得该用户的文章列表
+		Article.get(username, function(err, articles) {
+			var essays = [];
+
+			if (err) {
+				return res.status(400).send({err: '获取文章失败！'});
+			}
+
+			if (Math.ceil(articles.length / 6) < pageNum ) {
+				return res.status(400).send({err: '没有更多文章了！'});
+			}
+
+			essays = articles.slice((pageNum-1) * 6, (pageNum * 6) -1);
+
+			return res.status(200).send({suc: essays});
+
+		});
+	});
+
 };

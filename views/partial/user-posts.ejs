@@ -1,7 +1,7 @@
 		<div class="content-wrapper">
 			<div class="post-main">
 			<ol class="post-list">
-				<li>
+				<!-- <li>
 					<h2 class="post-title">
 						<a href="#" title="我的第一篇文章">我的第一篇文章</a>
 					</h2>
@@ -18,12 +18,49 @@
 						<a href="#" class="post-reading">继续阅读</a>
 						<hr class="post-divider"/>
 					</div>
-				</li>
+				</li> -->
+				
+				<% if (articles.length === 0) { %>
+					<li>还未发表文章，赶紧去发表哦！</li>
+				<% } else { %>
+
+					<% articles.slice(0, 5).forEach(function(article, index) { %>
+						<li>
+							<h2 class="post-title">
+								<a href="<%=article.url %>" title="<%=article.title%>">
+									<%=article.title%>
+								</a>
+							</h2>
+							<p class="post-text">
+								<%-article.text%>
+							</p>
+							<div class="post-meta">
+								<time data-time="<%=article.time%>" class="post-meta-date">
+									<%=article.time%>
+								</time>
+								<span>•</span>
+								<span class="post-meta-tag">文章</span>
+								<a href="<%=article.url %>" class="post-reading">继续阅读</a>
+								<hr class="post-divider"/>
+							</div>
+						</li>
+						
+					<% }) %>
+
+				<% } %>
+
 			</ol>
-			<nav class="pagination" role="navigation">
-				<a class="btn-page btn-inaction">上一页</a>
-				<span class="page-number">1 / 11</span>
-				<a href="#" class="btn-page next-page">下一页</a>
-			</nav>
+
+			<% if (articles.length > 6) { %>
+				<nav class="pagination" role="navigation" username=<%=user.name%>>
+					<a href="/u/<%=user.name%>/?page=1" class="btn-page up-page btn-inaction">上一页</a>
+					<span class="page-number" pagenum=1 maxpage=<%=Math.ceil(articles.length/6)%>>1 / <%= Math.ceil(articles.length/6)%></span>
+					<a href="/u/<%=user.name%>/?page=2" class="btn-page next-page">下一页</a>
+				</nav>
+			<% } else { %>
+				<p class="post-text">
+					没有更多文章了&nbsp;&nbsp;^o^&nbsp;&nbsp;
+				</p>
+			<% } %>
 			</div>
 		</div>

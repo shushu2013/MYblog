@@ -4,6 +4,7 @@ var User = require('../models/user');
 var Post = require('../models/post');
 var Article = require('../models/article');
 var Locals = require('./locals');
+var ObjectID = require('mongodb').ObjectID;
 
 // 处理 微言 首页
 exports.index = function(req, res) {
@@ -132,6 +133,50 @@ exports.user = function(req, res) {
 			});
 		});
 	});
+};
+
+// 处理个人文章 /u/:user/essay/:id
+exports.essay = function(req, res) {
+	var username = req.params.user;
+	var id = ObjectID(req.params.id);
+
+	// 先查找用户是否存在
+	User.get(username, function(err, user) {
+		if (!user) {
+			req.flash('error', '用户不存在');
+			return res.redirect('/');
+		}
+
+		Article.getOnly(username, id, function(err, article) {
+			if (err) {
+				article = {};
+			}
+
+
+			var locals = new Locals(req);
+			locals.addObj({
+				title: article.title,
+				user:user,
+				article: article,
+				url: null
+			});
+			
+			if (article.essayid || article.essayid === 0) {
+
+				Article.getPreNextLink(article.essayid, function(err, url){
+					locals.addObj({
+						url: url
+					});
+					res.render('useressay', locals);
+				});
+			} else {
+				res.render('useressay', locals);
+			}
+
+		});
+
+	});
+	
 };
 
 // 处理个人介绍 /u/:user/about

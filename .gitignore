@@ -15,3 +15,4 @@ node_modules
 # 忽略日志文件
 log/*
 *.log
+nodemon.json

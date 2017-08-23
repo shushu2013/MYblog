@@ -26,6 +26,7 @@ body {
 	background-position: center center;
 	color: #fff;
 	text-align: center;
+	z-index: 10;
 }
 
 .header-collapsed {
@@ -146,6 +147,12 @@ body {
 	color: #999;
 }
 
+.post-text+p {
+	font-size: .8em;
+	line-height: 1.6;
+	color: #999;
+}
+
 .post-meta {
 	margin-top: .6em;
 	font-size: .8em;
@@ -160,6 +167,8 @@ body {
 	margin-left: .4em;
 }
 
+
+
 .post-reading {
 	margin-left: .4em;
 	padding: .4em .6em;
@@ -172,6 +181,47 @@ body {
 	margin: 2em 0;
 	border-top: 1px solid #ddd;
 }
+
+/*
+ * 文章
+ */
+
+.post-essay {
+	margin-top: .5em;
+}
+
+.right-essay,.pre-essay {
+	float: left;
+	margin: 0 2em;
+
+}
+
+.next-essay {
+	float: right;
+	margin: 0 2em;
+	text-align: right;
+}
+
+
+.limit-text {
+	width: 12em;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	color: #4a4a4a;
+}
+
+.nav-essay a {
+	margin-left: .4em;
+	padding: .4em .6em;
+	border-radius: 1em;
+	border: 1px solid #bf1827;
+	color: #BF1827;
+}
+
+/*
+ * 分页
+ */
 
 .pagination {
 	text-align: left;
@@ -187,12 +237,24 @@ body {
 	border-radius: 1em;
 	border: 1px solid #2EA515;
 	color: #2EA515;
+	cursor: pointer;
+}
+
+.btn-page:hover {
+	border-color: #21800e;
+	color: #21800e;
 }
 
 .btn-inaction {
 	border: 1px solid #999;
 	color: #999;
 }
+
+.btn-inaction:hover {
+	border-color: #999;
+	color: #999;
+}
+
 
 @media only screen and (min-width: 960px ) {
 	.content-wrapper {
