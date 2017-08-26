@@ -13,6 +13,8 @@ module.exports = function(app) {
 
 	// 微文页面
 	app.get('/micro\-essay', routes.microessay);
+	// 微文点赞数记录
+	app.get('/domicroessay', dojxs.doessay);
 
 	// 个人主页
 	app.get('/u/:user', routes.user);

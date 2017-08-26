@@ -167,7 +167,14 @@ body {
 	margin-left: .4em;
 }
 
+.post-meta-tag a {
+	cursor: pointer;
+	color: #9c9c9c;
+}
 
+.post-meta-tag a:hover {
+	color: #9551d5;
+}
 
 .post-reading {
 	margin-left: .4em;

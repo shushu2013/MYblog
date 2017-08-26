@@ -43,7 +43,7 @@ $('.says a.btn').click(function(ev){
 			if(err.flag === 4) {
 				showTip(err.err, 'alert-danger');	
 			}else {
-				showTip('亲，出错了！', 'alert-danger');
+				showTip(err.err, 'alert-danger');
 			}
 		});
 });

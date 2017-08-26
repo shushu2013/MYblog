@@ -147,7 +147,7 @@ exports.essay = function(req, res) {
 			return res.redirect('/');
 		}
 
-		Article.getOnly(username, id, function(err, article) {
+		Article.getOnlyAndUpdate(username, id, function(err, article) {
 			if (err) {
 				article = {};
 			}

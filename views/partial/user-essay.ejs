@@ -12,8 +12,8 @@
 			</time>
 			<span>•</span>
 			<span class="post-meta-tag">文章</span>
-			<span class="post-meta-tag"><i class="fa fa-eye">&nbsp;<%=article.view%></i></span>
-			<span class="post-meta-tag"><i class="fa fa-thumbs-o-up">&nbsp;<%=article.up%></i></span>
+			<span class="post-meta-tag"><i class="fa fa-eye"><%=article.view%></i></span>
+			<span class="post-meta-tag"><a class="fa fa-thumbs-o-up" essayid=<%=article.id%> username=<%=article.user%>><%=article.up%></a></span>
 		</div>
 		<div class="post-essay markdown-body editormd-preview-container">
 			<%- article.html %>

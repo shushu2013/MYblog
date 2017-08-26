@@ -127,6 +127,49 @@ Article.getOnly = function getOnly(username, id, callback) {
 			};
 
 			// 更新浏览量
+			collection.findOne(query, function(err, doc) {
+				mongodb.close();
+				if (doc) {
+					var article = {
+						id: doc._id,
+						user: doc.user,
+						title: doc.title,
+						html: doc.html,
+						up: doc.up,
+						view: doc.view,
+						whoups: doc.whoups,
+						time: getDate(doc.time),
+						essayid: doc.id
+					};
+					callback(null, article);
+				} else {
+					callback(err, null);
+				}
+			});
+		});
+	});
+};
+
+Article.getOnlyAndUpdate = function getOnlyAndUpdate(username, id, callback) {
+	mongodb.open(function(err, db) {
+		if (err) {
+			return callback(err);
+		}
+
+		// 读取　articles 集合
+		db.collection('articles', function(err, collection) {
+			if (err) {
+				mongodb.close();
+				return callback(err);
+			}
+
+			// 查找　user 属性为　username, _id 属性为　id 的文档
+			var query = {
+				_id: id,
+				user: username
+			};
+
+			// 更新浏览量
 			collection.findOneAndUpdate(query, {$inc: {view: 1}}, function(err, doc) {
 				mongodb.close();
 				if (doc) {
@@ -148,6 +191,36 @@ Article.getOnly = function getOnly(username, id, callback) {
 		});
 	});
 };
+
+// 更新阅读量
+Article.update = function update(username, id, who, callback) {
+	mongodb.open(function(err, db) {
+		if (err) {
+			return callback(err);
+		}
+
+		// 读取　articles 集合
+		db.collection('articles', function(err, collection) {
+			if (err) {
+				mongodb.close();
+				return callback(err);
+			}
+
+			// 查找　user 属性为　username, _id 属性为　id 的文档
+			var query = {
+				_id: id,
+				user: username
+			};
+
+			// 更新阅读量
+			collection.update(query, {$inc: {up: 1}, $push: {whoups: who}}, function(err, doc) {
+				mongodb.close();
+				callback(err, doc);
+			});
+		});
+	});
+};
+
 
 // 获取文章链接
 Article.getLink = function(id, callback) {
@@ -205,33 +278,6 @@ Article.getPreNextLink = function(id, callback) {
 			}
 
 			callback(null, url);
-		});
-	});
-};
-
-// 更新阅读量
-Article.updateUp = function updateUp(username, id, callback) {
-	mongodb.open(function(err, db) {
-		if (err) {
-			return callback(err);
-		}
-
-		// 读取　articles　集合
-		db.collection('articles', function(err, collection) {
-			if (err) {
-				mongodb.close();
-				return callback(err);
-			}
-
-			var query = {
-				_id: id,
-				user: username
-			};
-
-			collection.update(query, {$inc: {up: 1}}, function(err, article) {
-				mongodb.close();
-				callback(err, article);
-			});
 		});
 	});
 };

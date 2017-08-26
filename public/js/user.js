@@ -1,4 +1,3 @@
-
 // 点击浏览文章
 $('header a[href=#blog]').click(function(ev) {
 	var header = $('header.header');
@@ -8,6 +7,30 @@ $('header a[href=#blog]').click(function(ev) {
 	header.addClass('header-collapsed');
 	$('.divider').addClass('user-hidden');
 	$('.user-description').addClass('user-hidden');
+});
+
+// 文章点赞
+$('.post-meta-tag a[essayid]').click(function(ev) {
+	var target = ev.target;
+	var id = target.getAttribute('essayid');
+	var username = target.getAttribute('username');
+	var num = target.text || 0;
+
+	$.ajax({
+		type: 'GET',
+		url: '/domicroessay',
+		data: "username="+username+"&id="+id, 
+		dataType: 'json',
+		success:function(msg) {
+			toastTip(msg.suc);
+			target.text = Number.parseInt(num) + 1;
+		},
+		error: function(r, textStatus, error) {
+			// alert(r.responseText);
+			var json = JSON.parse(r.responseText);
+			toastTip(json.err);
+		}
+	});
 });
 
 // ajax 请求文章页，上一页
@@ -101,4 +124,26 @@ function addArticles(json) {
 	});
 
 	ol.html(html);
+}
+
+function toastTip(msg){
+	var toast = document.createElement('div');
+	var id = document.createAttribute('id');
+	var style = document.createAttribute('style');
+	var text = document.createTextNode(msg);
+
+	id.value="toasttip";
+	style.value="position: absolute; top: 2em; left: 50%; margin-left: -5em; width: 10em; height: 2em; border-radius: 2em; line-height: 2em; text-align:center; background: #eee; color: green;";
+
+	toast.setAttributeNode(id);
+	toast.setAttributeNode(style);
+	toast.appendChild(text);
+
+	var body = document.getElementsByTagName('body')[0];
+	var parent = body.parentNode;
+	parent.insertBefore(toast, body);
+
+	setTimeout(function(){
+		parent.removeChild(toast);
+	}, 400);
 }
