@@ -1,8 +1,8 @@
-# 渐进式微博系统
+# 多人博客系统
 
 ## 由来
 这是我的个人项目，基于[《Node.js开发指南》](https://book.douban.com/subject/10789820/ "豆瓣链接")中的 weibo 项目，结合自己的需求，来
-渐进式开发一个微博系统。
+渐进式开发一个多人博客系统。
 
 ## 架构
 [Node](https://nodejs.org/ "Nodejs官网")<br>
